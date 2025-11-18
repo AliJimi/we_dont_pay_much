@@ -14,7 +14,7 @@ dependencies:
   # i18n – Flutter's built-in gen_l10n with intl
   flutter_localizations:
     sdk: flutter
-  intl: ^0.18.1
+  intl: ^0.20.2
 
   # State management (simple & flexible)
   provider: ^6.1.2
