@@ -1,0 +1,22 @@
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+
+# The generated Dart file
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+
+# Generate into lib/l10n so you can import with:
+# import 'package:interest_transfer_calculator/l10n/app_localizations.dart';
+output-dir: lib/l10n
+synthetic-package: false
+
+# Locales you actually ship
+preferred-supported-locales:
+  - en
+  - fa
+  - ar
+
+# Nice-to-have options
+nullable-getter: false
+use-deferred-loading: false
+format: true
