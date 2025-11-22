@@ -10,7 +10,7 @@ import 'package:we_dont_pay_much/features/calculator/domain/models/transfer_type
 class TransferFeeConfigService {
   TransferFeeConfigService({http.Client? client, String? baseUrl})
     : _client = client ?? http.Client(),
-      _baseUrl = baseUrl ?? 'https://wdpm.asd.com';
+      _baseUrl = baseUrl ?? 'https://wdpm.guthub.ir';
 
   final http.Client _client;
   final String _baseUrl;

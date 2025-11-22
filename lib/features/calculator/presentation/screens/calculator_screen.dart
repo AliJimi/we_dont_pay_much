@@ -38,7 +38,7 @@ class _CalculatorView extends StatefulWidget {
 
 class _CalculatorViewState extends State<_CalculatorView> {
   final _amountController = TextEditingController();
-  final _service = TransferFeeConfigService();
+  final _service = TransferFeeConfigService(baseUrl: 'https://wdpm.guthub.ir/latest/fee.json');
 
   Map<TransferType, TransferFeeConfig>? _configs;
   TransferType? _selectedType;

@@ -1,4 +1,4 @@
-package com.example.we_dont_pay_much
+package ir.guthub.wdpm
 
 import io.flutter.embedding.android.FlutterActivity
 
