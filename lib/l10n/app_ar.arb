@@ -1,5 +1,23 @@
 {
   "@@locale": "ar",
+  "transferTypeLabel": "نوع خدمة التحويل",
+  "transferTypeCardToCard": "تحويل شبكي من بطاقة إلى بطاقة / شباً",
+  "transferTypePayaIndividual": "تحويل بايا - فردي",
+  "transferTypePayaGroup": "تحويل بايا - جماعي",
+  "transferTypeSatna": "ساتنا",
+  "transferTypePol": "تحويل بطريقة بول (الجسر)",
+
+  "feeConfigLoading": "جاري تحميل رسوم التحويل...",
+  "feeConfigError": "تعذر تحميل رسوم التحويل. حاول مرة أخرى.",
+  "errorConfigNotLoaded": "لم يتم تحميل بيانات الرسوم بعد. حاول بعد قليل.",
+  "errorNoTransferType": "يرجى اختيار نوع خدمة التحويل.",
+  "errorAmountOutOfRange": "يجب أن يكون المبلغ بين {min} و {max}.",
+  "@errorAmountOutOfRange": {
+    "placeholders": {
+      "min": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
   "resultInterestLabel": "قيمة الفائدة / الرسوم",
   "currencySettingsTitle": "العملة",
   "currencyRialOnly": "ريال فقط",

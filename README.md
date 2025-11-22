@@ -1,5 +1,20 @@
 # WeDontPayMuch
 
+## Use flutter
+
+
+### MacOS / Linux
+```bash
+export PUB_HOSTED_URL="https://pub.flutter-io.cn"
+export FLUTTER_STORAGE_BASE_URL="https://storage.flutter-io.cn"
+```
+
+### Windows
+```bash
+set PUB_HOSTED_URL="https://pub.flutter-io.cn"
+set FLUTTER_STORAGE_BASE_URL="https://storage.flutter-io.cn"
+```
+
 ```text
 we_dont_pay_much/
 ├─ pubspec.yaml

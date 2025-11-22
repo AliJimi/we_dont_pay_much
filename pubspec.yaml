@@ -27,6 +27,7 @@ dependencies:
 
   # Optional: app/package info if you need it
   package_info_plus: ^8.0.0
+  http: ^1.2.0
 
   cupertino_icons: ^1.0.8
 

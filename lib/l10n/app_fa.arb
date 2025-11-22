@@ -1,5 +1,23 @@
 {
   "@@locale": "fa",
+  "transferTypeLabel": "نوع خدمت انتقال",
+  "transferTypeCardToCard": "انتقال شتابی کارت به کارت / کارت به شبا",
+  "transferTypePayaIndividual": "پایا - انفرادی و شخصی",
+  "transferTypePayaGroup": "پایا - گروهی",
+  "transferTypeSatna": "ساتنا",
+  "transferTypePol": "انتقال به شیوهٔ پل",
+
+  "feeConfigLoading": "در حال دریافت آخرین کارمزدهای انتقال...",
+  "feeConfigError": "امکان دریافت کارمزدها نیست. لطفاً دوباره تلاش کنید.",
+  "errorConfigNotLoaded": "اطلاعات کارمزد هنوز بارگذاری نشده است. چند لحظه بعد دوباره تلاش کنید.",
+  "errorNoTransferType": "لطفاً نوع خدمت انتقال را انتخاب کنید.",
+  "errorAmountOutOfRange": "مبلغ باید بین {min} و {max} باشد.",
+  "@errorAmountOutOfRange": {
+    "placeholders": {
+      "min": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
   "resultInterestLabel": "مبلغ سود / کارمزد",
   "currencySettingsTitle": "واحد پول",
   "currencyRialOnly": "فقط ریال",

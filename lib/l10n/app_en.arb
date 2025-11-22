@@ -1,5 +1,23 @@
 {
   "@@locale": "en",
+  "transferTypeLabel": "Transfer type",
+  "transferTypeCardToCard": "Shetabi card-to-card",
+  "transferTypePayaIndividual": "Paya – individual",
+  "transferTypePayaGroup": "Paya – group",
+  "transferTypeSatna": "Satna",
+  "transferTypePol": "Pol (bridge transfer)",
+
+  "feeConfigLoading": "Loading transfer fee rules...",
+  "feeConfigError": "Unable to load fee rules. Please try again.",
+  "errorConfigNotLoaded": "Fee rules are not loaded yet. Please try again in a moment.",
+  "errorNoTransferType": "Please choose a transfer type.",
+  "errorAmountOutOfRange": "Amount must be between {min} and {max}.",
+  "@errorAmountOutOfRange": {
+    "placeholders": {
+      "min": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
   "appTitle": "Interest Transfer Calculator",
   "resultInterestLabel": "Interest / fee amount",
   "currencySettingsTitle": "Currency",
