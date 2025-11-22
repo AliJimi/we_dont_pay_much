@@ -1,5 +1,12 @@
 {
   "@@locale": "fa",
+  "resultInterestLabel": "مبلغ سود / کارمزد",
+  "currencySettingsTitle": "واحد پول",
+  "currencyRialOnly": "فقط ریال",
+  "currencyTomanOnly": "فقط تومان",
+  "currencyRialAndToman": "ریال و تومان",
+  "currencyRialLabel": "ریال",
+  "currencyTomanLabel": "تومان",
   "appTitle": "محاسبه‌گر کارمزد انتقال",
   "navCalculator": "محاسبه",
   "navBankApps": "اپ‌های بانکی",

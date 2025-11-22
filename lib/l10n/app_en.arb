@@ -1,6 +1,13 @@
 {
   "@@locale": "en",
   "appTitle": "Interest Transfer Calculator",
+  "resultInterestLabel": "Interest / fee amount",
+  "currencySettingsTitle": "Currency",
+  "currencyRialOnly": "Rial only",
+  "currencyTomanOnly": "Toman only",
+  "currencyRialAndToman": "Rial & Toman",
+  "currencyRialLabel": "Rial",
+  "currencyTomanLabel": "Toman",
   "navCalculator": "Calculator",
   "navBankApps": "Bank apps",
   "navSettings": "Settings",

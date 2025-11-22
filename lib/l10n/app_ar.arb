@@ -1,5 +1,12 @@
 {
   "@@locale": "ar",
+  "resultInterestLabel": "قيمة الفائدة / الرسوم",
+  "currencySettingsTitle": "العملة",
+  "currencyRialOnly": "ريال فقط",
+  "currencyTomanOnly": "تومان فقط",
+  "currencyRialAndToman": "ريال و تومان",
+  "currencyRialLabel": "ريال",
+  "currencyTomanLabel": "تومان",
   "appTitle": "حاسبة رسوم التحويل",
   "navCalculator": "الحاسبة",
   "navBankApps": "تطبيقات البنوك",
