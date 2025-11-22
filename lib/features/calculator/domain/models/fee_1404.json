@@ -1,0 +1,25 @@
+[
+  {
+    "type_code": "CARD_TO_CARD",
+    "min_amount_rial": 10000,
+    "max_amount_rial": 500000000,
+    "calculation": {
+      "kind": "step",
+      "base_fee_rial": 7200,
+      "base_amount_rial": 10000000,
+      "step_fee_rial": 2800,
+      "step_amount_rial": 10000000
+    }
+  },
+  {
+    "type_code": "PAYA_INDIVIDUAL",
+    "min_amount_rial": 10000,
+    "max_amount_rial": 500000000,
+    "calculation": {
+      "kind": "percent_with_min_max",
+      "percent": 0.01,
+      "min_fee_rial": 2400,
+      "max_fee_rial": 30000
+    }
+  }
+]

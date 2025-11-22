@@ -9,6 +9,44 @@ class AppLocalizationsFa extends AppLocalizations {
   AppLocalizationsFa([String locale = 'fa']) : super(locale);
 
   @override
+  String get transferTypeLabel => 'نوع خدمت انتقال';
+
+  @override
+  String get transferTypeCardToCard =>
+      'انتقال شتابی کارت به کارت / کارت به شبا';
+
+  @override
+  String get transferTypePayaIndividual => 'پایا - انفرادی و شخصی';
+
+  @override
+  String get transferTypePayaGroup => 'پایا - گروهی';
+
+  @override
+  String get transferTypeSatna => 'ساتنا';
+
+  @override
+  String get transferTypePol => 'انتقال به شیوهٔ پل';
+
+  @override
+  String get feeConfigLoading => 'در حال دریافت آخرین کارمزدهای انتقال...';
+
+  @override
+  String get feeConfigError =>
+      'امکان دریافت کارمزدها نیست. لطفاً دوباره تلاش کنید.';
+
+  @override
+  String get errorConfigNotLoaded =>
+      'اطلاعات کارمزد هنوز بارگذاری نشده است. چند لحظه بعد دوباره تلاش کنید.';
+
+  @override
+  String get errorNoTransferType => 'لطفاً نوع خدمت انتقال را انتخاب کنید.';
+
+  @override
+  String errorAmountOutOfRange(String min, String max) {
+    return 'مبلغ باید بین $min و $max باشد.';
+  }
+
+  @override
   String get appTitle => 'محاسبه‌گر کارمزد انتقال';
 
   @override

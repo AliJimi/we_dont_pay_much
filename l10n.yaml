@@ -8,7 +8,7 @@ output-class: AppLocalizations
 # Generate into lib/l10n so you can import with:
 # import 'package:interest_transfer_calculator/l10n/app_localizations.dart';
 output-dir: lib/l10n
-synthetic-package: false
+#synthetic-package: false
 
 # Locales you actually ship
 preferred-supported-locales:

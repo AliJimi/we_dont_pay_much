@@ -9,6 +9,42 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get transferTypeLabel => 'نوع خدمة التحويل';
+
+  @override
+  String get transferTypeCardToCard => 'تحويل شبكي من بطاقة إلى بطاقة / شباً';
+
+  @override
+  String get transferTypePayaIndividual => 'تحويل بايا - فردي';
+
+  @override
+  String get transferTypePayaGroup => 'تحويل بايا - جماعي';
+
+  @override
+  String get transferTypeSatna => 'ساتنا';
+
+  @override
+  String get transferTypePol => 'تحويل بطريقة بول (الجسر)';
+
+  @override
+  String get feeConfigLoading => 'جاري تحميل رسوم التحويل...';
+
+  @override
+  String get feeConfigError => 'تعذر تحميل رسوم التحويل. حاول مرة أخرى.';
+
+  @override
+  String get errorConfigNotLoaded =>
+      'لم يتم تحميل بيانات الرسوم بعد. حاول بعد قليل.';
+
+  @override
+  String get errorNoTransferType => 'يرجى اختيار نوع خدمة التحويل.';
+
+  @override
+  String errorAmountOutOfRange(String min, String max) {
+    return 'يجب أن يكون المبلغ بين $min و $max.';
+  }
+
+  @override
   String get appTitle => 'حاسبة رسوم التحويل';
 
   @override

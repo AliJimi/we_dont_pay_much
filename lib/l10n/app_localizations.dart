@@ -100,6 +100,72 @@ abstract class AppLocalizations {
     Locale('ar'),
   ];
 
+  /// No description provided for @transferTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer type'**
+  String get transferTypeLabel;
+
+  /// No description provided for @transferTypeCardToCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Shetabi card-to-card'**
+  String get transferTypeCardToCard;
+
+  /// No description provided for @transferTypePayaIndividual.
+  ///
+  /// In en, this message translates to:
+  /// **'Paya – individual'**
+  String get transferTypePayaIndividual;
+
+  /// No description provided for @transferTypePayaGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Paya – group'**
+  String get transferTypePayaGroup;
+
+  /// No description provided for @transferTypeSatna.
+  ///
+  /// In en, this message translates to:
+  /// **'Satna'**
+  String get transferTypeSatna;
+
+  /// No description provided for @transferTypePol.
+  ///
+  /// In en, this message translates to:
+  /// **'Pol (bridge transfer)'**
+  String get transferTypePol;
+
+  /// No description provided for @feeConfigLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading transfer fee rules...'**
+  String get feeConfigLoading;
+
+  /// No description provided for @feeConfigError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load fee rules. Please try again.'**
+  String get feeConfigError;
+
+  /// No description provided for @errorConfigNotLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee rules are not loaded yet. Please try again in a moment.'**
+  String get errorConfigNotLoaded;
+
+  /// No description provided for @errorNoTransferType.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a transfer type.'**
+  String get errorNoTransferType;
+
+  /// No description provided for @errorAmountOutOfRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount must be between {min} and {max}.'**
+  String errorAmountOutOfRange(String min, String max);
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

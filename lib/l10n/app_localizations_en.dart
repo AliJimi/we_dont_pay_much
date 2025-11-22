@@ -9,6 +9,42 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get transferTypeLabel => 'Transfer type';
+
+  @override
+  String get transferTypeCardToCard => 'Shetabi card-to-card';
+
+  @override
+  String get transferTypePayaIndividual => 'Paya – individual';
+
+  @override
+  String get transferTypePayaGroup => 'Paya – group';
+
+  @override
+  String get transferTypeSatna => 'Satna';
+
+  @override
+  String get transferTypePol => 'Pol (bridge transfer)';
+
+  @override
+  String get feeConfigLoading => 'Loading transfer fee rules...';
+
+  @override
+  String get feeConfigError => 'Unable to load fee rules. Please try again.';
+
+  @override
+  String get errorConfigNotLoaded =>
+      'Fee rules are not loaded yet. Please try again in a moment.';
+
+  @override
+  String get errorNoTransferType => 'Please choose a transfer type.';
+
+  @override
+  String errorAmountOutOfRange(String min, String max) {
+    return 'Amount must be between $min and $max.';
+  }
+
+  @override
   String get appTitle => 'Interest Transfer Calculator';
 
   @override
