@@ -1,5 +1,4 @@
 // we_dont_pay_much/features/calculator/application/calculator_controller.dart
-
 import 'package:flutter/foundation.dart';
 
 import 'package:we_dont_pay_much/core/utils/interest_calculator.dart';
@@ -7,20 +6,35 @@ import 'package:we_dont_pay_much/features/calculator/domain/models/calculation_m
 
 class CalculatorController extends ChangeNotifier {
   CalculationMode _mode = CalculationMode.addInterest;
-  double? _result;
+
+  double? _baseAmountRial;
+  double? _totalAmountRial;
+  double? _interestAmountRial;
 
   CalculationMode get mode => _mode;
 
-  double? get result => _result;
+  double? get baseAmountRial => _baseAmountRial;
+  double? get totalAmountRial => _totalAmountRial;
+  double? get interestAmountRial => _interestAmountRial;
+
+  bool get hasResult =>
+      _baseAmountRial != null &&
+          _totalAmountRial != null &&
+          _interestAmountRial != null;
 
   void setMode(CalculationMode mode) {
     if (_mode == mode) return;
     _mode = mode;
-    _result = null;
+    _baseAmountRial = null;
+    _totalAmountRial = null;
+    _interestAmountRial = null;
     notifyListeners();
   }
 
   /// Returns an error localization key if validation fails, otherwise null.
+  ///
+  /// [amountText] and [interestText] are raw user inputs.
+  /// Internally everything is kept in **Rial**.
   String? calculate({
     required String amountText,
     required String interestText,
@@ -37,16 +51,23 @@ class CalculatorController extends ChangeNotifier {
 
     switch (_mode) {
       case CalculationMode.addInterest:
-        _result = calculateTotalWithInterest(
+        final total = calculateTotalWithInterest(
           baseAmount: amount,
           ratePercent: rate,
         );
+        _baseAmountRial = amount;
+        _totalAmountRial = total;
+        _interestAmountRial = total - amount;
         break;
+
       case CalculationMode.removeInterest:
-        _result = calculateBaseFromTotal(
+        final base = calculateBaseFromTotal(
           totalAmount: amount,
           ratePercent: rate,
         );
+        _baseAmountRial = base;
+        _totalAmountRial = amount;
+        _interestAmountRial = amount - base;
         break;
     }
 

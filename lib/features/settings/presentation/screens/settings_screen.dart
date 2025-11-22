@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:we_dont_pay_much/core/constants/app_sizes.dart';
+import 'package:we_dont_pay_much/core/constants/currency_display_mode.dart';
 import 'package:we_dont_pay_much/core/widgets/app_scaffold.dart';
 import 'package:we_dont_pay_much/l10n/app_localizations.dart';
 import 'package:we_dont_pay_much/services/app_settings_service.dart';
@@ -27,6 +28,8 @@ class SettingsScreen extends StatelessWidget {
                 ?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSizes.lg),
+
+          // Theme section
           Text(
             t.themeSectionTitle,
             style: theme.textTheme.titleSmall,
@@ -68,7 +71,10 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+
           const SizedBox(height: AppSizes.lg),
+
+          // Language section
           Text(
             t.languageSectionTitle,
             style: theme.textTheme.titleSmall,
@@ -88,6 +94,33 @@ class SettingsScreen extends StatelessWidget {
                 _LanguageTile(
                   labelKey: 'languageArabic',
                   localeCode: 'ar',
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: AppSizes.lg),
+
+          // Currency section
+          Text(
+            t.currencySettingsTitle,
+            style: theme.textTheme.titleSmall,
+          ),
+          const SizedBox(height: AppSizes.sm),
+          Card(
+            child: Column(
+              children: const [
+                _CurrencyTile(
+                  mode: CurrencyDisplayMode.rialOnly,
+                  labelKey: 'currencyRialOnly',
+                ),
+                _CurrencyTile(
+                  mode: CurrencyDisplayMode.tomanOnly,
+                  labelKey: 'currencyTomanOnly',
+                ),
+                _CurrencyTile(
+                  mode: CurrencyDisplayMode.both,
+                  labelKey: 'currencyRialAndToman',
                 ),
               ],
             ),
@@ -136,6 +169,47 @@ class _LanguageTile extends StatelessWidget {
       onChanged: (value) {
         if (value != null) {
           settings.setLocale(Locale(value));
+        }
+      },
+    );
+  }
+}
+
+class _CurrencyTile extends StatelessWidget {
+  const _CurrencyTile({
+    required this.mode,
+    required this.labelKey,
+  });
+
+  final CurrencyDisplayMode mode;
+  final String labelKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.watch<AppSettingsService>();
+    final t = AppLocalizations.of(context)!;
+
+    String label;
+    switch (labelKey) {
+      case 'currencyTomanOnly':
+        label = t.currencyTomanOnly;
+        break;
+      case 'currencyRialAndToman':
+        label = t.currencyRialAndToman;
+        break;
+      case 'currencyRialOnly':
+      default:
+        label = t.currencyRialOnly;
+        break;
+    }
+
+    return RadioListTile<CurrencyDisplayMode>(
+      value: mode,
+      groupValue: settings.currencyDisplayMode,
+      title: Text(label),
+      onChanged: (value) {
+        if (value != null) {
+          settings.setCurrencyDisplayMode(value);
         }
       },
     );
