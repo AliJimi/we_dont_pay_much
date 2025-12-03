@@ -19,7 +19,7 @@ class TransferFeeConfigService {
   ///
   /// Expected endpoint: GET {baseUrl}/api/transactions
   Future<Map<TransferType, TransferFeeConfig>> fetchConfigs() async {
-    final uri = Uri.parse('$_baseUrl/api/transactions');
+    final uri = Uri.parse('$_baseUrl/fee/latest.json');
     final response = await _client.get(uri);
 
     if (response.statusCode != 200) {
@@ -29,14 +29,11 @@ class TransferFeeConfigService {
     }
 
     final raw = jsonDecode(response.body);
-
-    if (raw is! List) {
-      throw Exception('Unexpected response format for transfer config');
-    }
+    final transactions = raw["transactions"];
 
     final Map<TransferType, TransferFeeConfig> result = {};
 
-    for (final item in raw) {
+    for (final item in transactions) {
       if (item is! Map<String, dynamic>) continue;
 
       try {

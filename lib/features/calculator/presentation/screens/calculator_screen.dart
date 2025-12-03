@@ -38,7 +38,7 @@ class _CalculatorView extends StatefulWidget {
 
 class _CalculatorViewState extends State<_CalculatorView> {
   final _amountController = TextEditingController();
-  final _service = TransferFeeConfigService(baseUrl: 'https://wdpm.guthub.ir/fee/latest.json');
+  final _service = TransferFeeConfigService(baseUrl: 'https://wdpm.guthub.ir');
 
   Map<TransferType, TransferFeeConfig>? _configs;
   TransferType? _selectedType;
@@ -59,6 +59,8 @@ class _CalculatorViewState extends State<_CalculatorView> {
 
     try {
       final configs = await _service.fetchConfigs();
+      print(configs);
+
       setState(() {
         _configs = configs;
         _selectedType = configs.isNotEmpty ? configs.keys.first : null;
@@ -233,6 +235,8 @@ class _CalculatorViewState extends State<_CalculatorView> {
     }
 
     if (_loadError != null) {
+      print('AAA1');
+      print(_loadError);
       return Row(
         children: [
           Icon(Icons.error_outline, color: theme.colorScheme.error),
@@ -252,6 +256,7 @@ class _CalculatorViewState extends State<_CalculatorView> {
 
     final configs = _configs;
     if (configs == null || configs.isEmpty) {
+      print('BBB2');
       return Text(
         t.feeConfigError,
         style: theme.textTheme.bodySmall?.copyWith(
