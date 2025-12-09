@@ -20,7 +20,7 @@ dependencies:
   provider: ^6.1.2
 
   # Persist theme + language
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.3
 
   # Scan installed apps (Android)
   device_apps: ^2.2.0

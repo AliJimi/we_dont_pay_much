@@ -71,3 +71,37 @@ we_dont_pay_much/
    └─ services/
       └─ app_settings_service.dart  # Persist theme mode, language, etc.
 ```
+
+## Android Gradle
+
+### Settings
+#### Java
+```java
+    maven {url 'https://jitpack.io'}
+    maven {url 'https://maven.aliyun.com/repository/google'}
+    maven {url 'https://maven.aliyun.com/repository/jcenter'}
+    maven {url 'https://maven.aliyun.com/repository/public'}
+    maven {url 'https://maven.aliyun.com/repository/gradle-plugin'}
+```
+#### Kotlin
+```kotlin
+    maven(url = "https://jitpack.io")
+
+    // Optional: Aliyun mirrors (fast in Asia)
+    maven(url = "https://maven.aliyun.com/repository/google")
+    maven(url = "https://maven.aliyun.com/repository/jcenter")
+    maven(url = "https://maven.aliyun.com/repository/public")
+    maven(url = "https://maven.aliyun.com/repository/gradle-plugin")
+```
+
+### shared_preferences_android
+Change
+```bash
+implementation("androidx.datastore:datastore:1.1.7")
+implementation("androidx.datastore:datastore-preferences:1.1.7")
+```
+To
+```bash
+implementation("androidx.datastore:datastore:1.1.0-alpha04")
+implementation("androidx.datastore:datastore-preferences:1.1.0-alpha04")
+```

@@ -14,12 +14,20 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        jcenter() // optional / deprecated
+        maven(url = "https://jitpack.io")
+
+        // Optional: Aliyun mirrors (fast in Asia)
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/jcenter")
+        maven(url = "https://maven.aliyun.com/repository/public")
+        maven(url = "https://maven.aliyun.com/repository/gradle-plugin")
     }
 }
 
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "8.9.1" apply false
+    id("com.android.application") version "8.7.3" apply false
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false
 }
 

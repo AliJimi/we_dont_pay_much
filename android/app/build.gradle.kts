@@ -7,16 +7,18 @@ plugins {
 
 android {
     namespace = "ir.guthub.wdpm"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+//    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
+//    ndkVersion = flutter.ndkVersion
+    ndkVersion = "28.0.12674087"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_21.toString()
     }
 
     defaultConfig {
@@ -24,10 +26,11 @@ android {
         applicationId = "ir.guthub.wdpm"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 26
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+//        multiDexEnabled = true
     }
 
     buildTypes {
