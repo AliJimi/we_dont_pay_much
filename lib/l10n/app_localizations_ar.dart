@@ -27,6 +27,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get transferTypePol => 'تحويل بطريقة بول (الجسر)';
 
   @override
+  String get versionDiscontinuedTitle => 'تحديث التطبيق مطلوب';
+
+  @override
+  String versionDiscontinuedMessage(String current, String latest) {
+    return 'إصدار التطبيق الحالي ($current) لم يعد مدعومًا. يُرجى التحديث إلى الإصدار $latest أو أحدث للمتابعة في الاستخدام.';
+  }
+
+  @override
+  String get versionDiscontinuedExitButton => 'إغلاق التطبيق';
+
+  @override
+  String get versionUpdateTitle => 'يتوفر تحديث جديد';
+
+  @override
+  String versionUpdateMessage(String current, String latest) {
+    return 'يتوفر إصدار أحدث من التطبيق ($latest). الإصدار الحالي لديك هو $current.';
+  }
+
+  @override
+  String get versionUpdateLaterButton => 'لاحقًا';
+
+  @override
+  String get versionUpdateNowButton => 'حدّث الآن';
+
+  @override
   String get feeConfigLoading => 'جاري تحميل رسوم التحويل...';
 
   @override

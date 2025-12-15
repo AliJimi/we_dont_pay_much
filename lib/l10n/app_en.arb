@@ -7,6 +7,27 @@
   "transferTypeSatna": "Satna",
   "transferTypePol": "Pol (bridge transfer)",
 
+  "versionDiscontinuedTitle": "Update required",
+  "versionDiscontinuedMessage": "Your app version {current} is no longer supported. Please update to at least version {latest} to continue.",
+  "@versionDiscontinuedMessage": {
+    "placeholders": {
+      "current": { "type": "String" },
+      "latest": { "type": "String" }
+    }
+  },
+  "versionDiscontinuedExitButton": "Exit app",
+
+  "versionUpdateTitle": "Update available",
+  "versionUpdateMessage": "A newer version ({latest}) of the app is available. You are currently on {current}.",
+  "@versionUpdateMessage": {
+    "placeholders": {
+      "current": { "type": "String" },
+      "latest": { "type": "String" }
+    }
+  },
+  "versionUpdateLaterButton": "Later",
+  "versionUpdateNowButton": "Update now",
+
   "feeConfigLoading": "Loading transfer fee rules...",
   "feeConfigError": "Unable to load fee rules. Please try again.",
   "errorConfigNotLoaded": "Fee rules are not loaded yet. Please try again in a moment.",

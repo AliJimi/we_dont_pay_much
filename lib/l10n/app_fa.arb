@@ -7,6 +7,27 @@
   "transferTypeSatna": "ساتنا",
   "transferTypePol": "انتقال به شیوهٔ پل",
 
+  "versionDiscontinuedTitle": "نیاز به به‌روزرسانی برنامه",
+  "versionDiscontinuedMessage": "نسخه فعلی برنامه ({current}) دیگر پشتیبانی نمی‌شود. لطفاً به نسخه {latest} یا بالاتر به‌روزرسانی کنید تا بتوانید از برنامه استفاده کنید.",
+  "@versionDiscontinuedMessage": {
+    "placeholders": {
+      "current": { "type": "String" },
+      "latest": { "type": "String" }
+    }
+  },
+  "versionDiscontinuedExitButton": "خروج از برنامه",
+
+  "versionUpdateTitle": "به‌روزرسانی جدید در دسترس است",
+  "versionUpdateMessage": "نسخه جدیدتری از برنامه (نسخه {latest}) منتشر شده است. در حال حاضر از نسخه {current} استفاده می‌کنید.",
+  "@versionUpdateMessage": {
+    "placeholders": {
+      "current": { "type": "String" },
+      "latest": { "type": "String" }
+    }
+  },
+  "versionUpdateLaterButton": "بعداً",
+  "versionUpdateNowButton": "هم‌اکنون به‌روزرسانی کن",
+
   "feeConfigLoading": "در حال دریافت آخرین کارمزدهای انتقال...",
   "feeConfigError": "امکان دریافت کارمزدها نیست. لطفاً دوباره تلاش کنید.",
   "errorConfigNotLoaded": "اطلاعات کارمزد هنوز بارگذاری نشده است. چند لحظه بعد دوباره تلاش کنید.",

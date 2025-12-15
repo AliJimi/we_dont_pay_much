@@ -27,6 +27,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transferTypePol => 'Pol (bridge transfer)';
 
   @override
+  String get versionDiscontinuedTitle => 'Update required';
+
+  @override
+  String versionDiscontinuedMessage(String current, String latest) {
+    return 'Your app version $current is no longer supported. Please update to at least version $latest to continue.';
+  }
+
+  @override
+  String get versionDiscontinuedExitButton => 'Exit app';
+
+  @override
+  String get versionUpdateTitle => 'Update available';
+
+  @override
+  String versionUpdateMessage(String current, String latest) {
+    return 'A newer version ($latest) of the app is available. You are currently on $current.';
+  }
+
+  @override
+  String get versionUpdateLaterButton => 'Later';
+
+  @override
+  String get versionUpdateNowButton => 'Update now';
+
+  @override
   String get feeConfigLoading => 'Loading transfer fee rules...';
 
   @override

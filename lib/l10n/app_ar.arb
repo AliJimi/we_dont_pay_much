@@ -7,6 +7,27 @@
   "transferTypeSatna": "ساتنا",
   "transferTypePol": "تحويل بطريقة بول (الجسر)",
 
+  "versionDiscontinuedTitle": "تحديث التطبيق مطلوب",
+  "versionDiscontinuedMessage": "إصدار التطبيق الحالي ({current}) لم يعد مدعومًا. يُرجى التحديث إلى الإصدار {latest} أو أحدث للمتابعة في الاستخدام.",
+  "@versionDiscontinuedMessage": {
+    "placeholders": {
+      "current": { "type": "String" },
+      "latest": { "type": "String" }
+    }
+  },
+  "versionDiscontinuedExitButton": "إغلاق التطبيق",
+
+  "versionUpdateTitle": "يتوفر تحديث جديد",
+  "versionUpdateMessage": "يتوفر إصدار أحدث من التطبيق ({latest}). الإصدار الحالي لديك هو {current}.",
+  "@versionUpdateMessage": {
+    "placeholders": {
+      "current": { "type": "String" },
+      "latest": { "type": "String" }
+    }
+  },
+  "versionUpdateLaterButton": "لاحقًا",
+  "versionUpdateNowButton": "حدّث الآن",
+
   "feeConfigLoading": "جاري تحميل رسوم التحويل...",
   "feeConfigError": "تعذر تحميل رسوم التحويل. حاول مرة أخرى.",
   "errorConfigNotLoaded": "لم يتم تحميل بيانات الرسوم بعد. حاول بعد قليل.",

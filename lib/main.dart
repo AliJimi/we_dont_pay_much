@@ -1,5 +1,3 @@
-// we_dont_pay_much/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_dont_pay_much/app.dart';
 import 'package:we_dont_pay_much/services/app_settings_service.dart';
 import 'package:we_dont_pay_much/core/constants/currency_display_mode.dart';
+import 'package:we_dont_pay_much/features/version_guard/version_gate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,20 +14,20 @@ Future<void> main() async {
 
   final storedThemeIndex =
       prefs.getInt(AppSettingsService.prefThemeModeKey) ??
-          ThemeMode.system.index;
-  final storedLocaleCode =
-  prefs.getString(AppSettingsService.prefLocaleCodeKey);
+      ThemeMode.system.index;
+  final storedLocaleCode = prefs.getString(
+    AppSettingsService.prefLocaleCodeKey,
+  );
   final storedCurrencyIndex =
       prefs.getInt(AppSettingsService.prefCurrencyDisplayModeKey) ??
-          CurrencyDisplayMode.both.index;
+      CurrencyDisplayMode.both.index;
 
   final initialThemeMode = ThemeMode.values[storedThemeIndex];
-  final initialLocale =
-  storedLocaleCode != null && storedLocaleCode.isNotEmpty
+  final initialLocale = storedLocaleCode != null && storedLocaleCode.isNotEmpty
       ? Locale(storedLocaleCode)
       : const Locale('en');
   final initialCurrencyDisplayMode =
-  CurrencyDisplayMode.values[storedCurrencyIndex];
+      CurrencyDisplayMode.values[storedCurrencyIndex];
 
   final settings = AppSettingsService(
     prefs: prefs,
@@ -40,7 +39,7 @@ Future<void> main() async {
   runApp(
     ChangeNotifierProvider<AppSettingsService>.value(
       value: settings,
-      child: const InterestTransferRoot(),
+      child: const VersionGate(child: InterestTransferRoot()),
     ),
   );
 }

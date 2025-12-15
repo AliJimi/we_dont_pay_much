@@ -136,6 +136,48 @@ abstract class AppLocalizations {
   /// **'Pol (bridge transfer)'**
   String get transferTypePol;
 
+  /// No description provided for @versionDiscontinuedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update required'**
+  String get versionDiscontinuedTitle;
+
+  /// No description provided for @versionDiscontinuedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your app version {current} is no longer supported. Please update to at least version {latest} to continue.'**
+  String versionDiscontinuedMessage(String current, String latest);
+
+  /// No description provided for @versionDiscontinuedExitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit app'**
+  String get versionDiscontinuedExitButton;
+
+  /// No description provided for @versionUpdateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update available'**
+  String get versionUpdateTitle;
+
+  /// No description provided for @versionUpdateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A newer version ({latest}) of the app is available. You are currently on {current}.'**
+  String versionUpdateMessage(String current, String latest);
+
+  /// No description provided for @versionUpdateLaterButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get versionUpdateLaterButton;
+
+  /// No description provided for @versionUpdateNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get versionUpdateNowButton;
+
   /// No description provided for @feeConfigLoading.
   ///
   /// In en, this message translates to:

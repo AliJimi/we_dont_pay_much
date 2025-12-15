@@ -28,6 +28,31 @@ class AppLocalizationsFa extends AppLocalizations {
   String get transferTypePol => 'انتقال به شیوهٔ پل';
 
   @override
+  String get versionDiscontinuedTitle => 'نیاز به به‌روزرسانی برنامه';
+
+  @override
+  String versionDiscontinuedMessage(String current, String latest) {
+    return 'نسخه فعلی برنامه ($current) دیگر پشتیبانی نمی‌شود. لطفاً به نسخه $latest یا بالاتر به‌روزرسانی کنید تا بتوانید از برنامه استفاده کنید.';
+  }
+
+  @override
+  String get versionDiscontinuedExitButton => 'خروج از برنامه';
+
+  @override
+  String get versionUpdateTitle => 'به‌روزرسانی جدید در دسترس است';
+
+  @override
+  String versionUpdateMessage(String current, String latest) {
+    return 'نسخه جدیدتری از برنامه (نسخه $latest) منتشر شده است. در حال حاضر از نسخه $current استفاده می‌کنید.';
+  }
+
+  @override
+  String get versionUpdateLaterButton => 'بعداً';
+
+  @override
+  String get versionUpdateNowButton => 'هم‌اکنون به‌روزرسانی کن';
+
+  @override
   String get feeConfigLoading => 'در حال دریافت آخرین کارمزدهای انتقال...';
 
   @override
