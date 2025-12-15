@@ -1,3 +1,5 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
 pluginManagement {
     val flutterSdkPath =
         run {
@@ -16,12 +18,29 @@ pluginManagement {
         gradlePluginPortal()
         jcenter() // optional / deprecated
         maven(url = "https://jitpack.io")
+        maven(url = "https://maven.google.com")
 
         // Optional: Aliyun mirrors (fast in Asia)
         maven(url = "https://maven.aliyun.com/repository/google")
         maven(url = "https://maven.aliyun.com/repository/jcenter")
         maven(url = "https://maven.aliyun.com/repository/public")
         maven(url = "https://maven.aliyun.com/repository/gradle-plugin")
+        maven(url = "https://download.flutter.io")
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
+    repositories {
+        val flutterStorageBaseUrl =
+            System.getenv("FLUTTER_STORAGE_BASE_URL") ?: "https://storage.googleapis.com"
+        maven(url = "$flutterStorageBaseUrl/download.flutter.io")
+
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/public")
+        google()
+        mavenCentral()
     }
 }
 
