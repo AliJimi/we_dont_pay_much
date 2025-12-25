@@ -35,7 +35,7 @@ class VersionCheckResult {
 ///   "discontinued_versions": ["0.9.0", "0.9.1"]
 /// }
 class VersionCheckService {
-  static const String _url = 'https://asd.com/releases/versions.json';
+  static const String _url = 'https://wdpm.guthub.ir/releases/versions.json';
 
   final http.Client _client;
 

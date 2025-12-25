@@ -1,11 +1,13 @@
 // we_dont_pay_much/features/calculator/presentation/screens/calculator_screen.dart
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:we_dont_pay_much/core/constants/app_sizes.dart';
 import 'package:we_dont_pay_much/core/constants/app_colors.dart';
-import 'package:we_dont_pay_much/core/constants/currency_display_mode.dart';
 import 'package:we_dont_pay_much/core/utils/money_formatter.dart';
 import 'package:we_dont_pay_much/core/widgets/app_scaffold.dart';
 import 'package:we_dont_pay_much/core/widgets/primary_button.dart';
@@ -38,6 +40,8 @@ class _CalculatorView extends StatefulWidget {
 
 class _CalculatorViewState extends State<_CalculatorView> {
   final _amountController = TextEditingController();
+  final _amountFocus = FocusNode();
+
   final _service = TransferFeeConfigService(baseUrl: 'https://wdpm.guthub.ir');
 
   Map<TransferType, TransferFeeConfig>? _configs;
@@ -59,28 +63,28 @@ class _CalculatorViewState extends State<_CalculatorView> {
 
     try {
       final configs = await _service.fetchConfigs();
-      print(configs);
-
+      if (!mounted) return;
       setState(() {
         _configs = configs;
         _selectedType = configs.isNotEmpty ? configs.keys.first : null;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _loadError = e;
       });
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   @override
   void dispose() {
     _amountController.dispose();
+    _amountFocus.dispose();
     super.dispose();
   }
 
@@ -93,123 +97,160 @@ class _CalculatorViewState extends State<_CalculatorView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(t.calculatorDescription, style: theme.textTheme.bodyMedium),
+          // Header / description (clean, modern)
+          _HeroHeader(
+            title: t.calculationModeTitle,
+            subtitle: t.calculatorDescription,
+            onRefresh: _loadConfigs,
+          ),
           const SizedBox(height: AppSizes.lg),
-          _buildCard(context),
+
+          // Main card
+          _buildModernCard(context),
+
+          const SizedBox(height: AppSizes.lg),
         ],
       ),
     );
   }
 
-  Widget _buildCard(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
+  Widget _buildModernCard(BuildContext context) {
     final theme = Theme.of(context);
+    final t = AppLocalizations.of(context)!;
     final controller = context.watch<CalculatorController>();
 
     final isAddInterest = controller.mode == CalculationMode.addInterest;
     final amountLabel = isAddInterest ? t.amountLabelBase : t.amountLabelTotal;
 
-    return Card(
+    final locale = Localizations.localeOf(context);
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.primary.withOpacity(0.14),
+            theme.colorScheme.secondary.withOpacity(0.08),
+            theme.colorScheme.surface.withOpacity(0.90),
+          ],
+          stops: const [0.0, 0.55, 1.0],
+        ),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withOpacity(0.10),
+        ),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 30,
+            offset: const Offset(0, 18),
+            color: Colors.black.withOpacity(theme.brightness == Brightness.dark ? 0.35 : 0.10),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Mode
-            Text(
-              t.calculationModeTitle,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+            // Section: Mode
+            _SectionTitle(
+              icon: Icons.tune_rounded,
+              title: t.calculationModeTitle,
             ),
             const SizedBox(height: AppSizes.sm),
-            Wrap(
-              spacing: AppSizes.sm,
-              runSpacing: AppSizes.sm,
-              children: [
-                ChoiceChip(
-                  selected: isAddInterest,
-                  label: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(t.modeAddInterestTitle),
-                      Text(
-                        t.modeAddInterestSubtitle,
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  selectedColor: theme.colorScheme.primary.withOpacity(0.15),
-                  onSelected: (_) {
-                    context.read<CalculatorController>().setMode(
-                      CalculationMode.addInterest,
-                    );
-                  },
+            _ModeSegmented(
+              isAddInterest: isAddInterest,
+              onSelect: (mode) {
+                context.read<CalculatorController>().setMode(mode);
+              },
+            ),
+
+            const SizedBox(height: AppSizes.lg),
+
+            // Section: Transfer type
+            _SectionTitle(
+              icon: Icons.swap_horiz_rounded,
+              title: t.transferTypeLabel,
+            ),
+            const SizedBox(height: AppSizes.xs),
+            _buildTransferTypeDropdown(context),
+
+            const SizedBox(height: AppSizes.sm),
+            _buildRangeInfoPill(context),
+
+            const SizedBox(height: AppSizes.lg),
+
+            // Section: Amount input
+            _SectionTitle(
+              icon: Icons.payments_rounded,
+              title: amountLabel,
+            ),
+            const SizedBox(height: AppSizes.sm),
+
+            TextField(
+              controller: _amountController,
+              focusNode: _amountFocus,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.done,
+              inputFormatters: [
+                _LocalizedThousandsFormatter(locale: locale),
+              ],
+              decoration: InputDecoration(
+                hintText: t.amountHint,
+                prefixIcon: const Icon(Icons.currency_exchange_rounded),
+                filled: true,
+                fillColor: theme.colorScheme.surface.withOpacity(
+                  theme.brightness == Brightness.dark ? 0.65 : 0.9,
                 ),
-                ChoiceChip(
-                  selected: !isAddInterest,
-                  label: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(t.modeRemoveInterestTitle),
-                      Text(
-                        t.modeRemoveInterestSubtitle,
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.onSurface.withOpacity(0.12),
                   ),
-                  selectedColor: theme.colorScheme.primary.withOpacity(0.15),
-                  onSelected: (_) {
-                    context.read<CalculatorController>().setMode(
-                      CalculationMode.removeInterest,
-                    );
-                  },
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.onSurface.withOpacity(0.10),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    width: 1.6,
+                  ),
+                ),
+              ),
+              onSubmitted: (_) => _onCalculatePressed(),
+            ),
+
+            const SizedBox(height: AppSizes.lg),
+
+            Row(
+              children: [
+                Expanded(
+                  child: PrimaryButton(
+                    label: t.calculateButton,
+                    icon: Icons.play_arrow_rounded,
+                    onPressed: _onCalculatePressed,
+                  ),
                 ),
               ],
             ),
 
             const SizedBox(height: AppSizes.lg),
 
-            // Transfer type selector
-            Text(
-              t.transferTypeLabel,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 220),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              child: controller.hasResult
+                  ? _buildResult(context)
+                  : const SizedBox.shrink(),
             ),
-            const SizedBox(height: AppSizes.xs),
-            _buildTransferTypeDropdown(context),
-
-            const SizedBox(height: AppSizes.sm),
-            _buildRangeInfo(context),
-
-            const SizedBox(height: AppSizes.lg),
-
-            // Amount input
-            TextField(
-              controller: _amountController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: InputDecoration(
-                labelText: amountLabel,
-                hintText: t.amountHint,
-              ),
-            ),
-
-            const SizedBox(height: AppSizes.lg),
-
-            Align(
-              alignment: Alignment.centerRight,
-              child: PrimaryButton(
-                label: t.calculateButton,
-                icon: Icons.play_arrow_rounded,
-                onPressed: _onCalculatePressed,
-              ),
-            ),
-
-            const SizedBox(height: AppSizes.lg),
-            _buildResult(context),
           ],
         ),
       ),
@@ -221,65 +262,107 @@ class _CalculatorViewState extends State<_CalculatorView> {
     final theme = Theme.of(context);
 
     if (_isLoading) {
-      return Row(
-        children: [
-          const SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-          const SizedBox(width: AppSizes.sm),
-          Text(t.feeConfigLoading, style: theme.textTheme.bodySmall),
-        ],
+      return _InlineStatus(
+        icon: const SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        text: t.feeConfigLoading,
       );
     }
 
     if (_loadError != null) {
-      print('AAA1');
-      print(_loadError);
-      return Row(
-        children: [
-          Icon(Icons.error_outline, color: theme.colorScheme.error),
-          const SizedBox(width: AppSizes.sm),
-          Expanded(
-            child: Text(
-              t.feeConfigError,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.error,
-              ),
-            ),
-          ),
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadConfigs),
-        ],
+      return _InlineStatus(
+        icon: Icon(Icons.error_outline_rounded, color: theme.colorScheme.error),
+        text: t.feeConfigError,
+        trailing: IconButton(
+          icon: const Icon(Icons.refresh_rounded),
+          onPressed: _loadConfigs,
+        ),
+        error: true,
       );
     }
 
     final configs = _configs;
     if (configs == null || configs.isEmpty) {
-      print('BBB2');
-      return Text(
-        t.feeConfigError,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.error,
-        ),
+      return _InlineStatus(
+        icon: Icon(Icons.warning_amber_rounded, color: theme.colorScheme.error),
+        text: t.feeConfigError,
+        error: true,
       );
     }
 
     return DropdownButtonFormField<TransferType>(
       value: _selectedType,
+      isExpanded: true, // ✅ prevents tight row overflow
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: theme.colorScheme.surface.withOpacity(
+          theme.brightness == Brightness.dark ? 0.60 : 0.95,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: theme.colorScheme.onSurface.withOpacity(0.12),
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      ),
+
+      // ✅ This controls how the CLOSED dropdown shows the selected value.
+      selectedItemBuilder: (context) {
+        return configs.keys.map((type) {
+          final label = _localizeTransferType(context, type);
+          return SizedBox(
+            width: double.infinity, // bounded -> Expanded is safe here
+            child: Row(
+              children: [
+                Icon(_iconForType(type), size: 18, color: theme.colorScheme.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis, // ✅ no overflow
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList();
+      },
+
+      // ✅ This controls the dropdown MENU items (must NOT use Expanded)
       items: configs.keys.map((type) {
         final label = _localizeTransferType(context, type);
-        return DropdownMenuItem(value: type, child: Text(label));
+        return DropdownMenuItem(
+          value: type,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(_iconForType(type), size: 18, color: theme.colorScheme.primary),
+              const SizedBox(width: 10),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 220),
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
       }).toList(),
+
       onChanged: (value) {
-        setState(() {
-          _selectedType = value;
-        });
+        setState(() => _selectedType = value);
       },
     );
   }
 
-  Widget _buildRangeInfo(BuildContext context) {
+  Widget _buildRangeInfoPill(BuildContext context) {
     final settings = context.watch<AppSettingsService>();
     final configs = _configs;
     final selectedType = _selectedType;
@@ -288,6 +371,8 @@ class _CalculatorViewState extends State<_CalculatorView> {
       return const SizedBox.shrink();
     }
 
+    final theme = Theme.of(context);
+    final t = AppLocalizations.of(context)!;
     final cfg = configs[selectedType]!;
     final displayMode = settings.currencyDisplayMode;
 
@@ -300,10 +385,28 @@ class _CalculatorViewState extends State<_CalculatorView> {
     final minText = format(cfg.minAmountRial);
     final maxText = format(cfg.maxAmountRial);
 
-    return Text(
-      // e.g., "Amount must be between X and Y"
-      AppLocalizations.of(context)!.errorAmountOutOfRange(minText, maxText),
-      style: Theme.of(context).textTheme.bodySmall,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: theme.colorScheme.primary.withOpacity(0.08),
+        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.18)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, size: 18, color: theme.colorScheme.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              t.errorAmountOutOfRange(minText, maxText),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.75),
+                height: 1.2,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -312,28 +415,21 @@ class _CalculatorViewState extends State<_CalculatorView> {
     final controller = context.read<CalculatorController>();
 
     if (_configs == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(t.errorConfigNotLoaded),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      _snackError(t.errorConfigNotLoaded);
       return;
     }
 
     if (_selectedType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(t.errorNoTransferType),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      _snackError(t.errorNoTransferType);
       return;
     }
 
+    // IMPORTANT: sanitize text -> ASCII digits, no separators
+    final sanitized = _sanitizeAmountText(_amountController.text);
+
     final cfg = _configs![_selectedType]!;
     final errorKey = controller.calculateWithConfig(
-      amountText: _amountController.text,
+      amountText: sanitized,
       config: cfg,
     );
 
@@ -351,25 +447,40 @@ class _CalculatorViewState extends State<_CalculatorView> {
             displayMode: displayMode,
           );
 
-          final minText = format(cfg.minAmountRial);
-          final maxText = format(cfg.maxAmountRial);
-          message = tt.errorAmountOutOfRange(minText, maxText);
+          message = tt.errorAmountOutOfRange(
+            format(cfg.minAmountRial),
+            format(cfg.maxAmountRial),
+          );
           break;
+
         case 'errorNoTransferType':
           message = tt.errorNoTransferType;
           break;
+
         case 'errorConfigNotLoaded':
           message = tt.errorConfigNotLoaded;
           break;
+
         case 'errorInvalidNumber':
         default:
           message = tt.errorInvalidNumber;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: AppColors.error),
-      );
+      _snackError(message);
+    } else {
+      // collapse keyboard for “clean” feel
+      FocusScope.of(context).unfocus();
     }
+  }
+
+  void _snackError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   Widget _buildResult(BuildContext context) {
@@ -378,18 +489,10 @@ class _CalculatorViewState extends State<_CalculatorView> {
     final controller = context.watch<CalculatorController>();
     final settings = context.watch<AppSettingsService>();
 
-    if (!controller.hasResult) {
-      return const SizedBox.shrink();
-    }
-
     final displayMode = settings.currencyDisplayMode;
     final base = controller.baseAmountRial!;
     final total = controller.totalAmountRial!;
     final fee = controller.feeAmountRial!;
-
-    final baseLabel = t.resultBaseLabel;
-    final totalLabel = t.resultTotalLabel;
-    final feeLabel = t.resultInterestLabel;
 
     String format(double value) => MoneyFormatter.formatCurrency(
       context,
@@ -398,32 +501,57 @@ class _CalculatorViewState extends State<_CalculatorView> {
     );
 
     return Container(
+      key: const ValueKey('result'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: theme.colorScheme.primary.withOpacity(0.05),
-        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(18),
+        color: theme.colorScheme.surface.withOpacity(
+          theme.brightness == Brightness.dark ? 0.70 : 0.95,
+        ),
+        border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.10)),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 18,
+            offset: const Offset(0, 12),
+            color: Colors.black.withOpacity(theme.brightness == Brightness.dark ? 0.30 : 0.08),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            t.resultTitle,
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            children: [
+              Icon(Icons.auto_graph_rounded, color: theme.colorScheme.primary),
+              const SizedBox(width: 10),
+              Text(
+                t.resultTitle,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AppSizes.sm),
+          const SizedBox(height: AppSizes.md),
 
-          _ResultLine(label: baseLabel, valueText: format(base)),
-          const SizedBox(height: AppSizes.xs),
-
-          _ResultLine(label: feeLabel, valueText: format(fee)),
+          _ResultLine(
+            label: t.resultBaseLabel,
+            valueText: format(base),
+          ),
           const SizedBox(height: AppSizes.xs),
 
           _ResultLine(
-            label: totalLabel,
+            label: t.resultInterestLabel,
+            valueText: format(fee),
+          ),
+          const SizedBox(height: AppSizes.sm),
+
+          Divider(color: theme.colorScheme.onSurface.withOpacity(0.10)),
+          const SizedBox(height: AppSizes.sm),
+
+          _ResultLine(
+            label: t.resultTotalLabel,
             valueText: format(total),
             emphasize: true,
           ),
@@ -447,6 +575,254 @@ class _CalculatorViewState extends State<_CalculatorView> {
         return t.transferTypePol;
     }
   }
+
+  IconData _iconForType(TransferType type) {
+    switch (type) {
+      case TransferType.cardToCard:
+        return Icons.credit_card_rounded;
+      case TransferType.payaIndividual:
+        return Icons.account_balance_rounded;
+      case TransferType.payaGroup:
+        return Icons.groups_rounded;
+      case TransferType.satna:
+        return Icons.bolt_rounded;
+      case TransferType.pol:
+        return Icons.route_rounded;
+    }
+  }
+
+  /// Removes separators and converts any Persian/Arabic-Indic digits to ASCII digits.
+  String _sanitizeAmountText(String input) {
+    final buf = StringBuffer();
+    for (final rune in input.runes) {
+      final ch = String.fromCharCode(rune);
+
+      // Strip common separators/spaces
+      if (ch == ',' || ch == '٬' || ch == ' ' || ch == '\u200f' || ch == '\u200e') {
+        continue;
+      }
+
+      final d = _DigitMaps.toAsciiDigit(ch);
+      if (d != null) {
+        buf.write(d);
+      }
+    }
+    return buf.toString();
+  }
+}
+
+class _HeroHeader extends StatelessWidget {
+  const _HeroHeader({
+    required this.title,
+    required this.subtitle,
+    required this.onRefresh,
+  });
+
+  final String title;
+  final String subtitle;
+  final VoidCallback onRefresh;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.primary.withOpacity(0.9),
+                theme.colorScheme.tertiary.withOpacity(0.8),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 18,
+                offset: const Offset(0, 12),
+                color: theme.colorScheme.primary.withOpacity(
+                  theme.brightness == Brightness.dark ? 0.25 : 0.18,
+                ),
+              ),
+            ],
+          ),
+          child: const Icon(Icons.calculate_rounded, color: Colors.white),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                subtitle,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.70),
+                  height: 1.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        IconButton(
+          tooltip: 'Refresh',
+          onPressed: onRefresh,
+          icon: const Icon(Icons.refresh_rounded),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.icon, required this.title});
+
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: theme.colorScheme.primary),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ModeSegmented extends StatelessWidget {
+  const _ModeSegmented({
+    required this.isAddInterest,
+    required this.onSelect,
+  });
+
+  final bool isAddInterest;
+  final void Function(CalculationMode mode) onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    // Material 3 SegmentedButton = modern, clean.
+    return SegmentedButton<CalculationMode>(
+      style: ButtonStyle(
+        visualDensity: VisualDensity.standard,
+        padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 10)),
+        side: WidgetStateProperty.all(
+          BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.10)),
+        ),
+      ),
+      segments: [
+        ButtonSegment(
+          value: CalculationMode.addInterest,
+          label: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(t.modeAddInterestTitle),
+              const SizedBox(height: 2),
+              Text(
+                t.modeAddInterestSubtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.65),
+                ),
+              ),
+            ],
+          ),
+          icon: const Icon(Icons.add_circle_outline_rounded),
+        ),
+        ButtonSegment(
+          value: CalculationMode.removeInterest,
+          label: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(t.modeRemoveInterestTitle),
+              const SizedBox(height: 2),
+              Text(
+                t.modeRemoveInterestSubtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.65),
+                ),
+              ),
+            ],
+          ),
+          icon: const Icon(Icons.remove_circle_outline_rounded),
+        ),
+      ],
+      selected: {isAddInterest ? CalculationMode.addInterest : CalculationMode.removeInterest},
+      onSelectionChanged: (set) {
+        if (set.isEmpty) return;
+        onSelect(set.first);
+      },
+    );
+  }
+}
+
+class _InlineStatus extends StatelessWidget {
+  const _InlineStatus({
+    required this.icon,
+    required this.text,
+    this.trailing,
+    this.error = false,
+  });
+
+  final Widget icon;
+  final String text;
+  final Widget? trailing;
+  final bool error;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: (error ? theme.colorScheme.error : theme.colorScheme.primary).withOpacity(0.06),
+        border: Border.all(
+          color: (error ? theme.colorScheme.error : theme.colorScheme.primary).withOpacity(0.16),
+        ),
+      ),
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: error
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.onSurface.withOpacity(0.75),
+              ),
+            ),
+          ),
+          if (trailing != null) trailing!,
+        ],
+      ),
+    );
+  }
 }
 
 class _ResultLine extends StatelessWidget {
@@ -463,17 +839,209 @@ class _ResultLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final textStyle = emphasize
-        ? theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
-        : theme.textTheme.bodyMedium;
+    final valueStyle = emphasize
+        ? theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)
+        : theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Flexible(child: Text(label, style: theme.textTheme.bodyMedium)),
+        Flexible(
+          child: Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.72),
+            ),
+          ),
+        ),
         const SizedBox(width: AppSizes.md),
-        Text(valueText, style: textStyle, textAlign: TextAlign.end),
+        Flexible(
+          child: Text(
+            valueText,
+            style: valueStyle,
+            textAlign: TextAlign.end,
+          ),
+        ),
       ],
     );
+  }
+}
+
+/// Formats input as user types:
+/// - accepts ASCII + Persian + Arabic-Indic digits
+/// - applies thousand separators instantly
+/// - displays digits in FA/AR if locale is fa/ar
+class _LocalizedThousandsFormatter extends TextInputFormatter {
+  _LocalizedThousandsFormatter({required this.locale});
+
+  final Locale locale;
+
+  bool get _useFaDigits => locale.languageCode.toLowerCase() == 'fa';
+  bool get _useArDigits => locale.languageCode.toLowerCase() == 'ar';
+
+  String get _sep => (_useFaDigits || _useArDigits) ? '٬' : ',';
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    // Extract digits (as ASCII), and remember how many digits were before cursor.
+    final raw = newValue.text;
+    final cursor = newValue.selection.end;
+
+    int digitsBeforeCursor = 0;
+    final asciiDigits = <String>[];
+
+    for (int i = 0; i < raw.length; i++) {
+      final ch = raw[i];
+      final d = _DigitMaps.toAsciiDigit(ch);
+      if (d != null) {
+        asciiDigits.add(d);
+        if (i < cursor) digitsBeforeCursor++;
+      }
+    }
+
+    if (asciiDigits.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    // Prevent absurd length (optional safety)
+    if (asciiDigits.length > 18) {
+      // keep last 18 digits
+      final trimmed = asciiDigits.sublist(asciiDigits.length - 18);
+      digitsBeforeCursor = math.min(digitsBeforeCursor, 18);
+      asciiDigits
+        ..clear()
+        ..addAll(trimmed);
+    }
+
+    final groupedAscii = _groupThousands(asciiDigits.join(), sep: _sep);
+
+    // Convert digits for display
+    final displayed = _useFaDigits
+        ? _DigitMaps.asciiToPersian(groupedAscii)
+        : _useArDigits
+        ? _DigitMaps.asciiToArabicIndic(groupedAscii)
+        : groupedAscii;
+
+    // Restore cursor to same "digit index" position inside the new formatted string.
+    final newCursor = _cursorForDigitIndex(
+      displayed,
+      digitIndex: digitsBeforeCursor,
+    );
+
+    return TextEditingValue(
+      text: displayed,
+      selection: TextSelection.collapsed(offset: newCursor),
+    );
+  }
+
+  static String _groupThousands(String digits, {required String sep}) {
+    // remove leading zeros (but keep a single zero)
+    final normalized = digits.replaceFirst(RegExp(r'^0+(?=\d)'), '');
+    final chars = normalized.split('');
+    final out = StringBuffer();
+
+    for (int i = 0; i < chars.length; i++) {
+      final idxFromRight = chars.length - i;
+      out.write(chars[i]);
+      if (idxFromRight > 1 && idxFromRight % 3 == 1) {
+        out.write(sep);
+      }
+    }
+    return out.toString();
+  }
+
+  static int _cursorForDigitIndex(String text, {required int digitIndex}) {
+    // digitIndex = number of digits before cursor (1..N)
+    if (digitIndex <= 0) return 0;
+
+    int seenDigits = 0;
+    for (int i = 0; i < text.length; i++) {
+      final d = _DigitMaps.toAsciiDigit(text[i]);
+      if (d != null) {
+        seenDigits++;
+        if (seenDigits >= digitIndex) {
+          return i + 1;
+        }
+      }
+    }
+    return text.length;
+  }
+}
+
+class _DigitMaps {
+  static const _persian = {
+    '۰': '0',
+    '۱': '1',
+    '۲': '2',
+    '۳': '3',
+    '۴': '4',
+    '۵': '5',
+    '۶': '6',
+    '۷': '7',
+    '۸': '8',
+    '۹': '9',
+  };
+
+  static const _arabicIndic = {
+    '٠': '0',
+    '١': '1',
+    '٢': '2',
+    '٣': '3',
+    '٤': '4',
+    '٥': '5',
+    '٦': '6',
+    '٧': '7',
+    '٨': '8',
+    '٩': '9',
+  };
+
+  static String? toAsciiDigit(String ch) {
+    // ASCII
+    final code = ch.codeUnitAt(0);
+    if (code >= 48 && code <= 57) return ch;
+
+    // Persian
+    final p = _persian[ch];
+    if (p != null) return p;
+
+    // Arabic-Indic
+    final a = _arabicIndic[ch];
+    if (a != null) return a;
+
+    return null;
+  }
+
+  static String asciiToPersian(String s) {
+    return s
+        .replaceAll('0', '۰')
+        .replaceAll('1', '۱')
+        .replaceAll('2', '۲')
+        .replaceAll('3', '۳')
+        .replaceAll('4', '۴')
+        .replaceAll('5', '۵')
+        .replaceAll('6', '۶')
+        .replaceAll('7', '۷')
+        .replaceAll('8', '۸')
+        .replaceAll('9', '۹');
+  }
+
+  static String asciiToArabicIndic(String s) {
+    return s
+        .replaceAll('0', '٠')
+        .replaceAll('1', '١')
+        .replaceAll('2', '٢')
+        .replaceAll('3', '٣')
+        .replaceAll('4', '٤')
+        .replaceAll('5', '٥')
+        .replaceAll('6', '٦')
+        .replaceAll('7', '٧')
+        .replaceAll('8', '٨')
+        .replaceAll('9', '٩');
   }
 }

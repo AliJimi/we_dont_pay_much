@@ -2,7 +2,7 @@ name: we_dont_pay_much
 description: "We Don't Pay Much. Calculate Interest Rate"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.2.9+2
 
 environment:
   sdk: ^3.9.2

@@ -31,7 +31,9 @@ TransferType? transferTypeFromApiCode(String code) {
       return TransferType.payaGroup;
     case 'SATNA':
       return TransferType.satna;
-    case 'POL':
+    case 'POL_ONLINE':
+      return TransferType.pol;
+    case 'POL_BANK':
       return TransferType.pol;
     default:
       return null;

@@ -17,7 +17,7 @@ class BankScannerScreen extends StatefulWidget {
 }
 
 class _BankScannerScreenState extends State<BankScannerScreen> {
-  final _scanner = const BankAppScannerService();
+  final _scanner = BankAppScannerService();
   Future<List<BankApp>>? _scanFuture;
 
   void _startScan() {
@@ -122,7 +122,9 @@ class _BankScannerScreenState extends State<BankScannerScreen> {
           itemBuilder: (context, index) {
             final app = apps[index];
             return ListTile(
-              leading: const Icon(Icons.account_balance_outlined),
+              leading: app.icon != null
+                  ? CircleAvatar(backgroundImage: MemoryImage(app.icon!))
+                  : const Icon(Icons.account_balance_outlined),
               title: Text(app.name),
               subtitle: Text(app.packageName),
             );
